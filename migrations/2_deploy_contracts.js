@@ -1,4 +1,3 @@
-var ChainList = artifacts.require("./ChainList.sol");
 var SageCoin = artifacts.require("./SageCoin.sol");
 var EventSale = artifacts.require("./EventSale.sol");
 var PokemonFest = artifacts.require("./PokemonFest.sol");
