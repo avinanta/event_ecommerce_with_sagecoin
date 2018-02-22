@@ -14,12 +14,12 @@ To run the code
     --> You need to use this to force recompilation if you are change parent contract, truffle / solidity compiler doesn't detect the code dependency correctly and it will result in child class not inheriting the latest codebase.
 
   - "truffle migrate --reset"
-    --> this will trigger "normal" compilation if required, then it will deploy the contracts to the Ethereum node.
-    --> The "--reset" option ensures the contract addresses are updated in the JSON files (located in build folder). You need them to be up-to-date so that truffle console or geth will work properly.
+    - this will trigger "normal" compilation if required, then it will deploy the contracts to the Ethereum node.
+    - The "--reset" option ensures the contract addresses are updated in the JSON files (located in build folder). You need them to be up-to-date so that truffle console or geth will work properly.
 
   - "truffle test test/test/EventSaleHappyFlow.js"
-    --> this is the main test suite. I'm using BDD for Truffle test (variant of Mocha).
-    --> Most of the test cases are in this js files
+    - this is the main test suite. I'm using BDD for Truffle test (variant of Mocha).
+    - Most of the test cases are in this js files
 
 
 TODOs
