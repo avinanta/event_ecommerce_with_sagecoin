@@ -35,10 +35,8 @@ contract('EventSale', function(accounts) {
   });
 
   // Test case: buying SageCoin with insufficient fund
-  it("should throw an exception if you try to buy coins with insufficient ether", function() {
-  });
+  it("should throw an exception if you try to buy coins with insufficient ether");
 
   // Test case: buying more coins than coin balance
-  it("should throw an exception if you try to buy more than the available balance", function() {
-  });
+  it("should throw an exception if you try to buy more than the available balance");
 });

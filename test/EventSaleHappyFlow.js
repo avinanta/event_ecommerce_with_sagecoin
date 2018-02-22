@@ -4,6 +4,34 @@ var EventSale = artifacts.require("./EventSale.sol");
 var PokemonFest = artifacts.require("./PokemonFest.sol");
 var WineAndDurian = artifacts.require("./WineAndDurian.sol");
 
+var completedTestCases = {};
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+function isTestCaseCompleted(testcase) {
+  return completedTestCases[testcase];
+}
+
+function completeTestCase(testcase) {
+  completedTestCases[testcase] = true;
+}
+
+function waitForTestCaseToComplete(testCases) {
+  var allCompleted;
+  do {
+    allCompleted = true;
+    for(i=0;i<testCases.length;i++) {
+      if (!isTestCaseCompleted(testCases[i])) {
+        allCompleted = false;
+        break;
+      }
+    }
+    sleep(200);
+  } while (!allCompleted);
+}
+
 // Test suite
 contract('EventSale', function(accounts) {
   var sageCoinInstance;
@@ -16,7 +44,7 @@ contract('EventSale', function(accounts) {
   var customer3 = accounts[5];
 
   // Test case: check initial values
-  it("should be initialized with empty values", function() {
+  it(tc1="should be initialized with empty values", function() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
       return sageCoinInstance.getTotalTokens();
@@ -32,10 +60,11 @@ contract('EventSale', function(accounts) {
     }).then(function(tokensSold) {
       assert.equal(tokensSold, 0x0, "token sold must be zero");
     });
+    completeTestCase(tc1);
   });
 
   // Test case: initialize with Token Sales
-  it("should be initialized total 10m SageCoins price at 0.01 ether each", function() {
+  it(tc2="should be initialized total 10m SageCoins price at 0.01 ether each", function() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
       sageCoinInstance.issueToken(10000000, web3.toWei(0.01, "ether"));
@@ -53,10 +82,11 @@ contract('EventSale', function(accounts) {
     }).then(function(tokensSold) {
       assert.equal(tokensSold, 0x0, "token sold must be zero");
     });
+    completeTestCase(tc2);
   });
 
   // Test case: purchase 100 coins from account[3]
-  it("account 3 purchases 100 coins", function() {
+  it(tc3="account 3 purchases 100 coins", function() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
       return sageCoinInstance.getBalance({from: customer1});
@@ -68,11 +98,12 @@ contract('EventSale', function(accounts) {
       return sageCoinInstance.getBalance({from: customer1});
     }).then(function(balance) {
       assert.equal(balance.toNumber(), 100, "balance after purchase must be 100");
+      completeTestCase(tc3);
     });
   });
 
   // Test case: purchase 100 coins from account[4]
-  it("account 4 purchase 80 coins", function() {
+  it(tc4="account 4 purchase 80 coins", function() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
       return sageCoinInstance.getBalance({from: customer2});
@@ -85,10 +116,11 @@ contract('EventSale', function(accounts) {
     }).then(function(balance) {
       assert.equal(balance.toNumber(), 80, "balance after purchase must be 80");
     });
+    completeTestCase(tc4);
   });
 
   // Test case: purchase 100 coins from account[5]
-  it("account 5 purchase 200 coins", function() {
+  it(tc5="account 5 purchase 200 coins", function() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
       return sageCoinInstance.getBalance({from: customer3});
@@ -101,10 +133,11 @@ contract('EventSale', function(accounts) {
     }).then(function(balance) {
       assert.equal(balance.toNumber(), 200, "balance after purchase must be 200");
     });
+    completeTestCase(tc5);
   });
 
   // Test case: Total coins bought should be 380
-  it("SageCoin sold 380 coins and ether balance of 3.8 ether", function() {
+  it(tc6="SageCoin sold 380 coins and ether balance of 3.8 ether", function F() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
       return sageCoinInstance.getTokensSold();
@@ -114,10 +147,11 @@ contract('EventSale', function(accounts) {
     }).then(function(wei) {
       assert.equal(wei.toNumber(), 380 * web3.toWei(0.01, "ether"), "wei balance must be " + (380 * web3.toWei(0.01, "ether")));
     });
+    completeTestCase(tc6);
   });
 
   // Test case: check initial values
-  it("Pokemon Fest 2018 should be initialized with 250 tickets with each priced at 2 SageCoins and 0 balance at CoinEx", function() {
+  it(tc7="Pokemon Fest 2018 should be initialized with 250 tickets with each priced at 2 SageCoins and 0 balance at CoinEx", function() {
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
     }).then(function() {
@@ -142,31 +176,54 @@ contract('EventSale', function(accounts) {
     }).then(function(coinBalance) {
       assert.equal(coinBalance, 0, "coin balance at CoinEx must be zero");
     });
+    completeTestCase(tc7);
   });
 
 
-  it("Buy 2 tickets from PokemonFest using accounts[1]", function() {
+  it(tc8="Buy 2 tickets from PokemonFest using accounts[1]", function() {
+    waitForTestCaseToComplete([tc3]);
+//    console.log("precondition:" + isTestCaseCompleted("account1_purchase_coins"));
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
     }).then(function() {
       return PokemonFest.deployed();
     }).then(function(instance) {
       pokemonFestInstance = instance;
+      sageCoinInstance.addToWhiteList(pokemonFestInstance.address);
+    }).then(function() {
       pokemonFestInstance.setCoinContract(sageCoinInstance.address);
     }).then(function() {
+      return pokemonFestInstance.getTotalTickets();
+    }).then(function(totalTickets) {
+      assert.equal(totalTickets.toNumber(), 250, "total tickets must be 250");
+      return pokemonFestInstance.getPrice();
+    }).then(function(price) {
+      assert.equal(price.toNumber(), 2, "ticket price must be 2");
+      return pokemonFestInstance.getTicketsSold();
+    }).then(function(ticketsSold) {
+      assert.equal(ticketsSold.toNumber(), 0, "ticket sold must be zero");
+      return sageCoinInstance.getBalance({from: customer1});
+    }).then(function(coinBalance) {
+      assert.equal(coinBalance.toNumber(), 100, "coin balance must be 100");
+      return pokemonFestInstance.getCoinBalance({from: customer1});
+    }).then(function(coinBalance) {
+      assert.equal(coinBalance.toNumber(), 0, "coin balance of pokemonFest must be 0");
       return pokemonFestInstance.buyTickets(3, {from: customer1});
-    }).then(function() {
-      return pokemonFestInstance.Sales(customer1);
     }).then(function(receipt) {
-      assert.equal(receipt.numberOfTickets, 3, "Number of tickets bought must be 3");
+      assert.equal(receipt.logs.length, 1, "should have received one event");
+      assert.equal(receipt.logs[0].args._numberOfTicketsBought.toNumber(), 3, "Number of tickets bought must be 3");
+      return pokemonFestInstance.Sales(customer1);
+    }).then(function(salesReceipt) {
+      assert.equal(salesReceipt[1], 3, "Event record must record 3 tickets sold to customer 1");
       return sageCoinInstance.getBalance({from: customer1});
     }).then(function(balance) {
       assert.equal(balance.toNumber(), (100 - (2 * 3)), "Coin balance after purchase of 3 PokemonFest ticket must be " + (100 - (2 * 3)));
     });
+    completeTestCase(tc8);
   });
 
   // Test case: check initial values
-  it("WineAndDurian should be initialized with 100 tickets with each priced at 10 SageCoins and 0 balance at CoinEx", function() {
+  it(tc9="WineAndDurian should be initialized with 100 tickets with each priced at 10 SageCoins and 0 balance at CoinEx", function() {
     return WineAndDurian.deployed().then(function(instance) {
       WineAndDurian = instance;
       return WineAndDurian.getTotalTickets();
@@ -176,8 +233,6 @@ contract('EventSale', function(accounts) {
     }).then(function(price) {
       assert.equal(price, 10, "Ticket price must be 10 SageCoins");
     });
+    completeTestCase(tc9);
   });
-
-
-
 });

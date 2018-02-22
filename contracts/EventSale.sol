@@ -21,7 +21,7 @@ contract EventSale is Owned {
   uint public price;
   uint public numberOfBuyers;
 
-  event buyEvent (address indexed _buyer, uint256 _numberOfTicketsBought);
+  event buyEvent (address indexed _buyer, uint _numberOfTicketsBought);
 
   /*
   function initialize(address _sageCoinContractAddr, string _name, uint _totalTickets, uint _price) onlyOwner {
@@ -71,9 +71,9 @@ contract EventSale is Owned {
     uint priceInCoins = price * _numberOfTicketsToBuy;
 
     AbstractSageCoin sageCoin = AbstractSageCoin(sageCoinContractAddr);
-    require(sageCoin.getBalance() > priceInCoins);
+    require(sageCoin.getBalance(msg.sender) >= priceInCoins);
 
-    sageCoin.transfer(this, priceInCoins);
+    sageCoin.transfer(msg.sender, this, priceInCoins);
     ticketsSold += _numberOfTicketsToBuy;
 
     SaleReceipt storage receipt = Sales[msg.sender];
@@ -83,8 +83,10 @@ contract EventSale is Owned {
     else {
       receipt.numberOfTickets += _numberOfTicketsToBuy;
     }
+    buyEvent(msg.sender, _numberOfTicketsToBuy);
   }
 
+  // Get balance of coin owned by event contract
   function getCoinBalance() public constant returns (uint) {
     AbstractSageCoin sageCoin = AbstractSageCoin(sageCoinContractAddr);
     return sageCoin.getBalance();
@@ -95,7 +97,7 @@ contract EventSale is Owned {
     AbstractSageCoin sageCoin = AbstractSageCoin(sageCoinContractAddr);
     // transfer all coins to contract owner
     // will sageCoin sees the contract address or actual contract owner address?
-    sageCoin.transfer(owner, sageCoin.getBalance());
+    sageCoin.transfer(this, owner, sageCoin.getBalance());
     selfdestruct(owner);
   }
 }

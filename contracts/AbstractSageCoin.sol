@@ -3,6 +3,10 @@ pragma solidity ^0.4.11;
 contract AbstractSageCoin {
     function issueToken(uint _totalTokens, uint _tokenPrice) public;
 
+    function addToWhiteList(address merchant) public;
+
+    function removeFromWhiteList(address merchant) public;
+    
     function buy() payable public returns (uint);
 
     function getTotalTokens() public constant returns (uint);
@@ -26,6 +30,6 @@ contract AbstractSageCoin {
     function withdraw() public;
 
     function allTokenHolders() constant public returns (address[]);
-    function transfer(address recipient, uint numberOfTokens) public returns (uint);
+    function transfer(address sender, address recipient, uint numberOfTokens) public returns (uint);
     function kill();
 }

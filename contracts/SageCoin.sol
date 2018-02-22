@@ -14,6 +14,7 @@ contract SageCoin is Owned {
      an unsigned integer which used to store the vote count
      */
     mapping (address => TokenHolder) public tokenHolderInfo;
+    mapping (address => bool) whiteList;
 
     // Total no. of tokens available for this election
     uint totalTokens = 0;
@@ -40,6 +41,11 @@ contract SageCoin is Owned {
     }
     */
 
+    // check for whitelisting
+    modifier onlyWhitelist() {
+      require(whiteList[msg.sender]);
+      _;
+    }
     /*
      Issue new token to support the event economy
      */
@@ -48,6 +54,15 @@ contract SageCoin is Owned {
       totalTokens = _totalTokens;
       balanceTokens = _totalTokens;
       issueTokenEvent(_totalTokens, _tokenPrice);
+    }
+
+    function addToWhiteList(address merchant) onlyOwner public {
+      if (!whiteList[merchant])
+        whiteList[merchant] = true;
+    }
+
+    function removeFromWhiteList(address merchant) onlyOwner public {
+      whiteList[merchant] = false;
     }
 
     /* This function is used to purchase the tokens. Note the keyword 'payable'
@@ -107,7 +122,8 @@ contract SageCoin is Owned {
       return tokenHolderInfo[msg.sender].balance;
     }
 
-    function getBalance(address _holderAddress) onlyOwner public constant returns (uint) {
+    // removed onlyOwner
+    function getBalance(address _holderAddress) public constant returns (uint) {
       return tokenHolderInfo[_holderAddress].balance;
     }
 
@@ -147,11 +163,11 @@ contract SageCoin is Owned {
 
     /* transfer coins from one holder to another
      */
-    function transfer(address _recipient, uint _numberOfTokens) public returns (uint) {
+    function transfer(address sender, address _recipient, uint _numberOfTokens) onlyWhitelist public returns (uint) {
       // check msg.sender has sufficient coins
-      require(getBalance()>=_numberOfTokens);
-      // check receipient has a tokenHolder record, if not create new record
-      // record the transfer
+      require(getBalance(sender)>=_numberOfTokens);
+      // check receipient has a tokenHolder record, if not create new record and record the transfer
+
       TokenHolder storage holder = tokenHolderInfo[_recipient];
       if (holder.holderAddress == 0x0) {
         tokenHolderInfo[_recipient] = TokenHolder(_recipient, _numberOfTokens);
@@ -160,12 +176,13 @@ contract SageCoin is Owned {
       else {
         holder.balance += _numberOfTokens;
       }
-      tokenHolderInfo[msg.sender].balance -= _numberOfTokens;
-      if (tokenHolderInfo[msg.sender].balance == 0) {
+      tokenHolderInfo[sender].balance -= _numberOfTokens;
+      if (tokenHolderInfo[sender].balance == 0) {
         numberOfTokenHolder--;
       }
       transferEvent(msg.sender, _recipient, _numberOfTokens);
       // returns the number of coins transferred
+
       return _numberOfTokens;
     }
 
