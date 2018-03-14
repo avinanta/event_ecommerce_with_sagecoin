@@ -9,17 +9,16 @@ contract EventSale is Owned {
     address buyer;
     uint numberOfTickets;
   }
+  address sageCoinContractAddr;
+
+  string name;
+  uint totalTickets;
+  uint ticketsSold;
+  uint price;
+  uint numberOfBuyers;
 
   // State variables
   mapping(address => SaleReceipt) public Sales;
-
-  address sageCoinContractAddr;
-
-  string public name;
-  uint public totalTickets;
-  uint public ticketsSold;
-  uint public price;
-  uint public numberOfBuyers;
 
   event buyEvent (address indexed _buyer, uint _numberOfTicketsBought);
 
@@ -56,6 +55,10 @@ contract EventSale is Owned {
     return ticketsSold;
   }
 
+  function getTotalTicketsAvailable() public constant returns (uint) {
+    return totalTickets - ticketsSold;
+  }
+
   function getPrice() public constant returns (uint) {
     return price;
   }
@@ -68,6 +71,7 @@ contract EventSale is Owned {
   function buyTickets(uint _numberOfTicketsToBuy) public {
     require(_numberOfTicketsToBuy > 0);
     require(totalTickets - ticketsSold >= _numberOfTicketsToBuy);
+
     uint priceInCoins = price * _numberOfTicketsToBuy;
 
     AbstractSageCoin sageCoin = AbstractSageCoin(sageCoinContractAddr);

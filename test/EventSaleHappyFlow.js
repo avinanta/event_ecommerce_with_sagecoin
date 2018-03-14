@@ -182,7 +182,6 @@ contract('EventSale', function(accounts) {
 
   it(tc8="Buy 2 tickets from PokemonFest using accounts[1]", function() {
     waitForTestCaseToComplete([tc3]);
-//    console.log("precondition:" + isTestCaseCompleted("account1_purchase_coins"));
     return SageCoin.deployed().then(function(instance) {
       sageCoinInstance = instance;
     }).then(function() {
