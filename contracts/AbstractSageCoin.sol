@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 contract AbstractSageCoin {
     function issueToken(uint _totalTokens, uint _tokenPrice) public;
@@ -6,7 +6,7 @@ contract AbstractSageCoin {
     function addToWhiteList(address merchant) public;
 
     function removeFromWhiteList(address merchant) public;
-    
+
     function buy() payable public returns (uint);
 
     function getTotalTokens() public constant returns (uint);
