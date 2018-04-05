@@ -21,7 +21,8 @@ contract EventSale is Owned {
   mapping(address => SaleReceipt) public Sales;
 
   event buyEvent (address indexed _buyer, uint _numberOfTicketsBought);
-
+  event refundEvent (address indexed _buyer, uint _numberOfTicketsRefunded);
+  event transferEvent (address indexed _from, address indexed _to, uint _numberOfTicketsTransferred);
   /*
   function initialize(address _sageCoinContractAddr, string _name, uint _totalTickets, uint _price) onlyOwner {
     sageCoinContractAddr = _sageCoinContractAddr;
@@ -75,7 +76,7 @@ contract EventSale is Owned {
     uint priceInCoins = price * _numberOfTicketsToBuy;
 
     AbstractSageCoin sageCoin = AbstractSageCoin(sageCoinContractAddr);
-    require(sageCoin.getBalance(msg.sender) >= priceInCoins);
+    require(sageCoin.getBalanceOfAddress(msg.sender) >= priceInCoins);
 
     sageCoin.transfer(msg.sender, this, priceInCoins);
     ticketsSold += _numberOfTicketsToBuy;
@@ -83,12 +84,58 @@ contract EventSale is Owned {
     SaleReceipt storage receipt = Sales[msg.sender];
     if (receipt.buyer == 0x0) {
       Sales[msg.sender] = SaleReceipt(msg.sender, _numberOfTicketsToBuy);
+      numberOfBuyers++;
     }
     else {
       receipt.numberOfTickets += _numberOfTicketsToBuy;
     }
     buyEvent(msg.sender, _numberOfTicketsToBuy);
   }
+
+  // refund tickets
+  function refundTickets(uint _numberOfTicketsToRefund) public {
+    // ok to use msg.sender because EventSale is to be inherited and NOT called as a separate contract
+    SaleReceipt storage receipt = Sales[msg.sender];
+    // check user has purchased sufficient # of tickets to request for refund
+    require(_numberOfTicketsToRefund <= receipt.numberOfTickets);
+    uint priceInCoins = price * _numberOfTicketsToRefund;
+
+    AbstractSageCoin sageCoin = AbstractSageCoin(sageCoinContractAddr);
+    // check the event contract has sufficient token balance to refund
+    require(sageCoin.getBalanceOfAddress(this) >= priceInCoins);
+
+    // deduct the tickets and transfer the tokens
+    receipt.numberOfTickets -= _numberOfTicketsToRefund;
+    ticketsSold -= _numberOfTicketsToRefund;
+    if (receipt.numberOfTickets == 0) {
+      numberOfBuyers--;
+    }
+    sageCoin.transfer(this, msg.sender, priceInCoins);
+    refundEvent(msg.sender, _numberOfTicketsToRefund);
+  }
+
+  // refund tickets
+  function transferTickets(address recipient, uint _numberOfTicketsToTransfer) public {
+    // ok to use msg.sender because EventSale is to be inherited and NOT called as a separate contract
+    SaleReceipt storage fromReceipt = Sales[msg.sender];
+    // check user has purchased sufficient # of tickets to request for refund
+    require(_numberOfTicketsToTransfer <= fromReceipt.numberOfTickets);
+
+    SaleReceipt storage toReceipt = Sales[recipient];
+    if (toReceipt.buyer == 0x0) {
+      Sales[msg.sender] = SaleReceipt(msg.sender, _numberOfTicketsToTransfer);
+      numberOfBuyers++;
+    }
+    else {
+      toReceipt.numberOfTickets += _numberOfTicketsToTransfer;
+    }
+    fromReceipt.numberOfTickets -= _numberOfTicketsToTransfer;
+    if (fromReceipt.numberOfTickets == 0) {
+      numberOfBuyers--;
+    }
+    transferEvent(msg.sender, recipient, _numberOfTicketsToTransfer);
+  }
+
 
   // Get balance of coin owned by event contract
   function getCoinBalance() public constant returns (uint) {

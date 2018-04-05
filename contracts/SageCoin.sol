@@ -27,9 +27,9 @@ contract SageCoin is Owned {
 
     event issueTokenEvent (uint _issueSize, uint _etherPrice);
 
-    event buyEvent (address indexed _buyer, uint _numberOfCoins);
+    event buyTokenEvent (address indexed _buyer, uint _numberOfCoins);
 
-    event transferEvent(address indexed _from, address indexed _to, uint _numberOfTokens);
+    event transferTokenEvent(address indexed _from, address indexed _to, uint _numberOfTokens);
 
     /* When the contract is deployed on the blockchain, we will initialize
      the total number of tokens for sale, cost per token and all the candidates
@@ -90,7 +90,7 @@ contract SageCoin is Owned {
       if (toReturn > 0) {
         msg.sender.transfer(toReturn);
       }
-      buyEvent(msg.sender, _tokensToBuy);
+      buyTokenEvent(msg.sender, _tokensToBuy);
       return _tokensToBuy;
     }
 
@@ -121,6 +121,11 @@ contract SageCoin is Owned {
     function getBalance() public constant returns (uint) {
       return tokenHolderInfo[msg.sender].balance;
     }
+
+    function getBalanceOfAddress(address _holderAddress) public constant returns (uint) {
+      return tokenHolderInfo[_holderAddress].balance;
+    }
+
 
     // removed onlyOwner
     function getBalance(address _holderAddress) public constant returns (uint) {
@@ -180,7 +185,7 @@ contract SageCoin is Owned {
       if (tokenHolderInfo[sender].balance == 0) {
         numberOfTokenHolder--;
       }
-      transferEvent(msg.sender, _recipient, _numberOfTokens);
+      transferTokenEvent(msg.sender, _recipient, _numberOfTokens);
       // returns the number of coins transferred
 
       return _numberOfTokens;
@@ -189,5 +194,9 @@ contract SageCoin is Owned {
     // kill the smart contract
     function kill() onlyOwner {
       selfdestruct(owner);
+    }
+
+    function loop(uint x) public constant returns (uint) {
+      return x + 3;
     }
 }

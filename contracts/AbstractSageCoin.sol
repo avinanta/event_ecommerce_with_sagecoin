@@ -23,6 +23,8 @@ contract AbstractSageCoin {
 
     function getBalance() public constant returns (uint);
 
+    function getBalanceOfAddress(address _holderAddress) public constant returns (uint);
+
     function getBalance(address _holderAddress) public constant returns (uint);
 
     function redeemToken() public returns (uint);
