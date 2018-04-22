@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SageCoin DApps</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <p class="navbar-brand">SAGECoin DApps</p>
+
+            </div>
+
+            <!-- /.navbar-header -->
+            <ul class="nav navbar-top-links navbar-right">
+                                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <div id="account_dropdown"></div>
+                        <li class="divider"></li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+
+
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <div class="input-group custom-search-form">
+                         
+                            </span>
+                            </div>
+                            <!-- /input-group -->
+                        </li>
+                        <li>
+                            <p><i class="fa fa-dashboard fa-fw"></i> Main</p>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-money"></i> Sage Coin<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+<!--                                    <a href="#" onclick="JavaScript:sageCoinSubscription()"> Coin Subscription</a>
+                                </li> -->
+                                <li>
+                                    <a href"#" onclick="App.menuInvoke('issue')"=> Coin Issuance</a>
+                                </li>
+                                 <li>
+                                    <a href="#" onclick="App.menuInvoke('purchase')"> Coin Sales / Purchase</a>
+                                </li>
+                                 <li>
+                                    <a href="#" onclick="App.menuInvoke('transfer')"> Coin Transfer</a>
+                                </li>
+
+
+                                <li>
+
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                </div>
+                <!-- /.sidebar-collapse -->
+                
+
+
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="page-header">SAGECoin DApps</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-9">
+                    <div id="middlecontent">
+<!-- PANEL PRIMARY -->
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <strong><div id="main-header"></div></strong>
+                            </div>
+                            <div class="panel-body">
+                                <p id="main-body"></p>
+                            </div>
+                        </div>
+
+<!-- END PANEL PRIMARY -->
+
+<!--   FORM ISSUANCE -->                    
+                        <div class="panel panel-primary" id="form-issuance">
+                            <div class="panel-heading">
+                                <strong><div id="heading-issuance">Coin Issuance</div></strong>
+                            </div>
+                            <div class="panel-body">
+                                 <form role='form' name='tokenissue' ><div class='form-group'>
+                                 <label>Number of Token to be Issued</label>
+                                 <input name='numberTokenToIssue' id='numberTokenToIssue' class='form-control text-input'><br>
+                                 <label><p class="text-info" id='description_issuance'></p></label><br/>
+                                 <button  type='button' class='btn btn-default' onclick='App.sageIssue()'>Issue Tokens</button></div></form>
+                            </div>
+                            
+                        </div>
+<!-- END FORM ISSUANCE -->
+
+<!--   FORM SELLING COIN -->                    
+                        <div class="panel panel-primary" id="form-purchase">
+                            <div class="panel-heading">
+                                <strong><div id="heading-issuance">Purchase SageCoins</div></strong>
+                            </div>
+                            <div class="panel-body">
+                                 <form role='form' name='tokenpurchase'><div class='form-group'>
+                                 <label>Number of Token</label>
+                                 <input name='numberTokenToPurchase' id='numberTokenToPurchase' class='form-control text-input'><br>
+                                 <label><p class="text-info" id='description_purchase'></p></label><br/>
+                                 <button type='button' class='btn btn-default' onclick='App.sagePurchase()'>Buy Token</button></div></form>
+                            </div>
+                            
+                        </div>
+<!-- END FORM SELLING COIN-->
+
+<!--   FORM TRANSFER -->                    
+                        <div class="panel panel-primary" id="form-transfer">
+                            <div class="panel-heading">
+                                <strong><div id="heading-issuance">Coin Transfer</div></strong>
+                            </div>
+                            <div class="panel-body">
+                                 <form role='form' name='tokentransfer' ><div class='form-group'>
+                                 <label>Recipient Address</label>
+                                 <input name='recipientAddress' id='recipientAddress' class='form-control text-input'><p><br/></p>
+                                 <label>Number of Token</label>
+                                 <input name='numberTokenToTransfer' id='numberTokenToTransfer' class='form-control text-input'><br>
+
+                                 <label><p class="text-info" id='description_transfer'></p></label> <br>
+                                 <button type='button' class='btn btn-default' onclick='App.sageTransfer()'>Transfer</button></div></form>
+                            </div>
+                        </div>
+<!-- END FORM TRANSFER -->
+
+<!-- LOG PANEL -->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <strong><div id="log-main">Log</div></strong>
+                            </div>
+                            <div class="panel-body">
+                                <p id="log-body" class="text-muted"></p>
+                            </div>
+                        </div>
+
+<!-- LOG PANEL -->
+
+
+
+                </div>
+
+                </div>
+            
+                <div class="col-lg-3">
+                    <div class="row">
+                    <div id="rightcontent">
+                
+                        <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Account and Balances
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                            <table class="table borderless">
+                                <tr><td colspan=2>Account<br><p id="statusAccountNumber" class="text-truncate"></p></td></tr>
+                                <tr><td>Coin</td><td><p id="statusCoinBalance"></p></td></tr>
+                                <tr><td>Ethers</td><td><p id="statusEthersBalance"></p></td></tr>
+                            </table>
+                        </div>
+                        </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                        <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Coin Status
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                            <table class="table borderless">
+                                <tr><td>Coin Issued</td><td><p id="statusCoinIssued"></p></td></tr>
+                                <tr><td>Coin Sold</td><td><p id="statusCoinSold"></p></td></tr>
+                                <tr><td>Coin Price</td><td><p id="statusCoinPrice"></p></td></tr>
+                            </table>
+                        </div>
+                        </div>
+                        </div>
+
+
+                </div>
+            </div>
+        </div>
+            <!-- /.row -->
+            <!-- Modal -->
+            <div class="modal fade" id="sageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+             <div class="modal-dialog">
+               <div class="modal-content">
+                 <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                   <h4 class="modal-title" id="myModalLabel"><div id="modal-title-text"></div></h4>
+                </div>
+                <div class="modal-body">
+                  <div id="modal-body-text"></div>
+                </div>
+                <div class="modal-footer">
+                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+             </div>
+             <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+       </div>
+       <!-- /.modal -->
+
+
+
+
+    
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+<!--    <script src="vendor/raphael/raphael.min.js"></script>
+    <script src="vendor/morrisjs/morris.min.js"></script>
+    <script src="data/morris-data.js"></script> -->
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+        <!-- INCLUDE ALL THE CODE HERE -->
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"> </script> 
+    <script src="js/sageapp.js"></script> 
+
+
+</body>
+
+</html>
